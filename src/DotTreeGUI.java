@@ -20,7 +20,7 @@ public class DotTreeGUI extends DrawingGUI {
 	private PointQuadtree<Dot> tree = null;			// holds the dots
 	private char mode = 'a';						// 'a': adding; 'q': querying with the mouse
 	private int mouseX, mouseY;						// current mouse location, when querying
-	private int mouseRadius = 10;					// circle around mouse location, for querying
+	private int mouseRadius = 50;					// circle around mouse location, for querying
 	private boolean trackMouse = false;				// if true, then print out where the mouse is as it moves
 	private List<Dot> found = null;					// who was found near mouse, when querying
 	
@@ -49,13 +49,12 @@ public class DotTreeGUI extends DrawingGUI {
 	public void handleMousePress(int x, int y) {
 		if (mode == 'a') {
 			// Add a new dot at the point
-			// TODO: YOUR CODE HERE
-		}
-		else if (mode == 'q') {
-			// Set "found" to what tree says is near the mouse press
-			// TODO: YOUR CODE HERE
-		}
-		else {
+			if (tree != null) tree.insert(new Dot(x, y));
+			else tree = new PointQuadtree<>(new Dot(x, y), 0, 0, width, height);
+		} else if (mode == 'q') {
+			//if tree exists, call findInCircle for x, y, local radius var
+			if (tree != null) found = tree.findInCircle(x, y, mouseRadius);
+		} else {
 			System.out.println("clicked at "+x+","+y);
 		}
 		repaint();
@@ -148,21 +147,17 @@ public class DotTreeGUI extends DrawingGUI {
 		if (key=='a' || key=='q') mode = key;
 		else if (key=='+') {
 			mouseRadius += 10;
-		}
-		else if (key=='-') {
+		} else if (key=='-') {
 			mouseRadius -= 10;
 			if (mouseRadius < 0) mouseRadius=0;
-		}
-		else if (key=='m') {
+		} else if (key=='m') {
 			trackMouse = !trackMouse;
-		}
-		else if (key=='0') {
+		} else if (key=='0') {
 			test0();
-		}
-		else if (key=='1') {
+		} else if (key=='1') {
 			test1();
 		}
-		// TODO: YOUR CODE HERE -- your test cases
+		//TODO: YOUR CODE HERE -- your test cases
 
 		repaint();
 	}
@@ -196,10 +191,15 @@ public class DotTreeGUI extends DrawingGUI {
 		// Set the color for this level
 		g.setColor(rainbow[level % rainbow.length]);
 		// Draw this node's dot and lines through it
-		// TODO: YOUR CODE HERE
+		g.fillOval((int)tree.getPoint().getX()-dotRadius, (int)tree.getPoint().getY()-dotRadius, dotRadius*2, dotRadius*2);
+		g.drawLine((int)tree.getPoint().getX(), tree.getY1(), (int)tree.getPoint().getX(), tree.getY2());
+		g.drawLine(tree.getX1(), (int)tree.getPoint().getY(), tree.getX2(), (int)tree.getPoint().getY());
+
 
 		// Recurse with children
-		// TODO: YOUR CODE HERE
+		for (int i = 1; i < 5; i++) {
+			if (tree.hasChild(i)) drawTree(g, tree.getChild(i), level+1);
+		}
 	}
 
 	public static void main(String[] args) {

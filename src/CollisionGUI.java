@@ -88,7 +88,16 @@ public class CollisionGUI extends DrawingGUI {
 	public void draw(Graphics g) {
 		// TODO: YOUR CODE HERE
 		// Ask all the blobs to draw themselves.
+		for (Blob b: blobs){
+			g.fillOval((int)(b.x-b.r), (int)(b.y-b.r), (int)b.r*2, (int)b.r*2);
+		}
 		// Ask the colliders to draw themselves in red.
+		g.setColor(Color.red);
+		if (colliders != null) {
+			for (Blob b : colliders) {
+				g.fillOval((int) (b.x - b.r), (int) (b.y - b.r), (int) b.r * 2, (int) b.r * 2);
+			}
+		}
 	}
 
 	/**
@@ -97,6 +106,7 @@ public class CollisionGUI extends DrawingGUI {
 	private void findColliders() {
 		// TODO: YOUR CODE HERE
 		// Create the tree
+		PointQuadtree
 		// For each blob, see if anybody else collided with it
 	}
 

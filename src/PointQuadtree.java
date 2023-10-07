@@ -82,29 +82,19 @@ public class PointQuadtree<E extends Point2D> {
 			child.insert(p2);
 		} else {
 			double newx1, newy1, newx2, newy2;
+
+			newx1 = (quadrant == 2 || quadrant == 3) ? x1 : point.getX();
+			newy1 = (quadrant == 1 || quadrant == 2) ? y1 : point.getY();
+			newx2 = (quadrant == 1 || quadrant == 4) ? x2 : point.getX();
+			newy2 = (quadrant == 3 || quadrant == 4) ? y2 : point.getY();
+
 			if (quadrant == 1){
-				newx1 = point.getX();
-				newy1 = y1;
-				newx2 = x2;
-				newy2 = point.getY();
 				c1 = new PointQuadtree<E>(p2, (int)newx1, (int)newy1, (int)newx2, (int)newy2);
 			} else if (quadrant ==2) {
-				newx1 = x1;
-				newy1 = y1;
-				newx2 = point.getX();
-				newy2 = point.getY();
 				c2 = new PointQuadtree<E>(p2, (int)newx1, (int)newy1, (int)newx2, (int)newy2);
 			} else if (quadrant ==3) {
-				newx1 = x1;
-				newy1 = point.getY();
-				newx2 = point.getX();
-				newy2 = y2;
 				c3 = new PointQuadtree<E>(p2, (int)newx1, (int)newy1, (int)newx2, (int)newy2);
 			} else {
-				newx1 = point.getX();
-				newy1 = point.getY();
-				newx2 = x2;
-				newy2 = y2;
 				c4 = new PointQuadtree<E>(p2, (int)newx1, (int)newy1, (int)newx2, (int)newy2);
 			}
 		}
@@ -119,9 +109,9 @@ public class PointQuadtree<E extends Point2D> {
 	 * @return
 	 */
 	private int findQuadrant(E p2){
-		if (p2.getX() >= point.getX() && p2.getY() > point.getY()){
+		if (p2.getX() >= point.getX() && p2.getY() < point.getY()){
 			return 1;
-		} else if (p2.getX() < point.getX() && p2.getY() >= point.getY()) {
+		} else if (p2.getX() < point.getX() && p2.getY() <= point.getY()) {
 			return 2;
 		} else if (p2.getX() <= point.getX() && p2.getY() > point.getY())  {
 			return 3;
@@ -181,6 +171,10 @@ public class PointQuadtree<E extends Point2D> {
 				child.findInCircleHelper(list, cx, cy, cr);
 			}
 		}
+	}
+
+	public static void main(String args[]) {
+		//lol maybe just do this later
 	}
 
 }
