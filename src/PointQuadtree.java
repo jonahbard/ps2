@@ -10,6 +10,8 @@ import java.util.List;
  * @author CBK, Fall 2016, generic with Point2D interface.
  * 
  */
+
+
 public class PointQuadtree<E extends Point2D> {
 	private E point;							// the point anchoring this node
 	private int x1, y1;							// upper-left corner of the region
@@ -69,26 +71,93 @@ public class PointQuadtree<E extends Point2D> {
 	/**
 	 * Inserts the point into the tree
 	 */
-	public void insert(E p2) {
-		// TODO: YOUR CODE HERE
 
+
+	//TODO: MAKE SURE TO USE CORRECT Y SCALING FOR CG!!
+	public void insert(E p2) {
+		int quadrant = findQuadrant(p2);
+		PointQuadtree<E> child = getChild(quadrant);
+
+		if (child != null){
+			child.insert(p2);
+		} else {
+			double newx1, newy1, newx2, newy2;
+			if (quadrant == 1){
+				newx1 = point.getX();
+				newy1 = y1;
+				newx2 = x2;
+				newy2 = point.getY();
+				c1 = new PointQuadtree<E>(p2, (int)newx1, (int)newy1, (int)newx2, (int)newy2);
+			} else if (quadrant ==2) {
+				newx1 = x1;
+				newy1 = y1;
+				newx2 = point.getX();
+				newy2 = point.getY();
+				c2 = new PointQuadtree<E>(p2, (int)newx1, (int)newy1, (int)newx2, (int)newy2);
+			} else if (quadrant ==3) {
+				newx1 = x1;
+				newy1 = point.getY();
+				newx2 = point.getX();
+				newy2 = y2;
+				c3 = new PointQuadtree<E>(p2, (int)newx1, (int)newy1, (int)newx2, (int)newy2);
+			} else {
+				newx1 = point.getX();
+				newy1 = point.getY();
+				newx2 = x2;
+				newy2 = y2;
+				c4 = new PointQuadtree<E>(p2, (int)newx1, (int)newy1, (int)newx2, (int)newy2);
+			}
+		}
+	}
+
+	/**
+	 * finds which region quadrant, with respect to local point,
+	 * a new point will fall into. Extends each quadrant by one unit
+	 * in the counterclockwise direction (to account for when new
+	 * point lies on same vertical or horizontal).
+	 * @param p2
+	 * @return
+	 */
+	private int findQuadrant(E p2){
+		if (p2.getX() >= point.getX() && p2.getY() > point.getY()){
+			return 1;
+		} else if (p2.getX() < point.getX() && p2.getY() >= point.getY()) {
+			return 2;
+		} else if (p2.getX() <= point.getX() && p2.getY() > point.getY())  {
+			return 3;
+		} else {
+			return 4;
+		}
 	}
 	
 	/**
 	 * Finds the number of points in the quadtree (including its descendants)
 	 */
 	public int size() {
-		// TODO: YOUR CODE HERE
-//		return 0;
+		int sum = 1;
+		for (int i = 1; i < 5; i++){
+			if (getChild(i) != null) sum += getChild(i).size();
+		}
+		return sum;
 	}
 	
 	/**
 	 * Builds a list of all the points in the quadtree (including its descendants)
 	 */
 	public List<E> allPoints() {
-		// TODO: YOUR CODE HERE
-//		return new ArrayList<E>();
-	}	
+		ArrayList<E> list = new ArrayList<E>();
+		allPointsHelper(list);
+		return list;
+	}
+
+	private void allPointsHelper(List<E> list){
+		list.add(point);
+		for (int i = 1; i < 5; i++){
+			if (hasChild(i)){
+				getChild(i).allPointsHelper(list);
+			}
+		}
+	}
 
 	/**
 	 * Uses the quadtree to find all points within the circle
@@ -98,10 +167,20 @@ public class PointQuadtree<E extends Point2D> {
 	 * @return    	the points in the circle (and the qt's rectangle)
 	 */
 	public List<E> findInCircle(double cx, double cy, double cr) {
-		// TODO: YOUR CODE HERE
-//		return new ArrayList<E>();
+		ArrayList<E> list = new ArrayList<E>();
+		findInCircleHelper(list, cx, cy, cr);
+		return list;
 	}
 
-	// TODO: YOUR CODE HERE for any helper methods.
+	private void findInCircleHelper(List<E> list, double cx, double cy, double cr){
+		if (Geometry.circleIntersectsRectangle(cx, cy, cr, x1, y1, x2, y2)) {
+			if (Geometry.pointInCircle(point.getX(), point.getY(), cx, cy, cr)) list.add(point);
+			for (int i = 1; i < 5; i++){
+				PointQuadtree<E> child = getChild(i);
+				if (child == null) continue;
+				child.findInCircleHelper(list, cx, cy, cr);
+			}
+		}
+	}
 
 }
