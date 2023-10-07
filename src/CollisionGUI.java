@@ -2,8 +2,10 @@ import java.awt.*;
 
 import javax.swing.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Using a quadtree for collision detection
@@ -20,6 +22,8 @@ public class CollisionGUI extends DrawingGUI {
 	private char blobType = 'b';						// what type of blob to create
 	private char collisionHandler = 'c';				// when there's a collision, 'c'olor them, or 'd'estroy them
 	private int delay = 100;							// timer control
+
+	private static final int collisionRadius = 20;
 
 	public CollisionGUI() {
 		super("super-collider", width, height);
@@ -89,13 +93,13 @@ public class CollisionGUI extends DrawingGUI {
 		// TODO: YOUR CODE HERE
 		// Ask all the blobs to draw themselves.
 		for (Blob b: blobs){
-			g.fillOval((int)(b.x-b.r), (int)(b.y-b.r), (int)b.r*2, (int)b.r*2);
+			g.fillOval((int)(b.getX()-b.getR()), (int)(b.getY()-b.getR()), (int)b.getR()*2, (int)b.getR()*2);
 		}
 		// Ask the colliders to draw themselves in red.
 		g.setColor(Color.red);
 		if (colliders != null) {
 			for (Blob b : colliders) {
-				g.fillOval((int) (b.x - b.r), (int) (b.y - b.r), (int) b.r * 2, (int) b.r * 2);
+				g.fillOval((int) (b.getX() - b.getR()), (int) (b.getY() - b.getR()), (int) b.getR() * 2, (int) b.getR() * 2);
 			}
 		}
 	}
@@ -104,10 +108,20 @@ public class CollisionGUI extends DrawingGUI {
 	 * Sets colliders to include all blobs in contact with another blob
 	 */
 	private void findColliders() {
-		// TODO: YOUR CODE HERE
 		// Create the tree
-		PointQuadtree
+		PointQuadtree<Blob> tree = new PointQuadtree<>(blobs.get(0), 0, 0, width, height);
+		for (Blob b: blobs) {
+			if (b != tree.getPoint()) tree.insert(b);
+		}
 		// For each blob, see if anybody else collided with it
+		colliders = new ArrayList<>();
+		for (Blob b: blobs){
+			// make it a set so it runs faster because there are no duplicates
+			// cr: b.getR() + collisionRadius just in case r changes to be greater than collisionradius, ensuring that all overlapping blobs are considered colliding
+			Set<Blob> curCollisions = new HashSet<>(tree.findInCircle(b.getX(), b.getY(), b.getR() + collisionRadius));
+			if (curCollisions.size() < 2) continue;
+			colliders.addAll(curCollisions);
+		}
 	}
 
 	/**
@@ -115,8 +129,8 @@ public class CollisionGUI extends DrawingGUI {
 	 */
 	public void handleTimer() {
 		// Ask all the blobs to move themselves.
-		for (Blob blob : blobs) {
-			blob.step();
+		for (Blob b : blobs) {
+			b.step();
 		}
 		// Check for collisions
 		if (blobs.size() > 0) {
