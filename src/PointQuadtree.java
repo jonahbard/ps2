@@ -70,12 +70,12 @@ public class PointQuadtree<E extends Point2D> {
 	}
 
 	/**
-	 * Inserts the point into the tree
+	 * Inserts the point into the tree with its own proper
+	 * region corner coordinates, at its proper local
+	 * variable (c1, c2, c3, or c4)
 	 */
-
-
 	public void insert(E p2) {
-		int quadrant = findQuadrant(p2);
+		int quadrant = findQuadrant(p2); //calls findQuadrant to easily store quadrant
 		PointQuadtree<E> child = getChild(quadrant);
 
 		if (child != null){
@@ -83,11 +83,13 @@ public class PointQuadtree<E extends Point2D> {
 		} else {
 			double newx1, newy1, newx2, newy2;
 
+			//update corner coordinates to the new region boundaries
 			newx1 = (quadrant == 2 || quadrant == 3) ? x1 : point.getX();
 			newy1 = (quadrant == 1 || quadrant == 2) ? y1 : point.getY();
 			newx2 = (quadrant == 1 || quadrant == 4) ? x2 : point.getX();
 			newy2 = (quadrant == 3 || quadrant == 4) ? y2 : point.getY();
 
+			//create new quadreee node in respective local child variable
 			if (quadrant == 1){
 				c1 = new PointQuadtree<E>(p2, (int)newx1, (int)newy1, (int)newx2, (int)newy2);
 			} else if (quadrant ==2) {
