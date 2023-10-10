@@ -49,8 +49,8 @@ public class DotTreeGUI extends DrawingGUI {
 	public void handleMousePress(int x, int y) {
 		if (mode == 'a') {
 			// Add a new dot at the point
-			if (tree != null) tree.insert(new Dot(x, y));
-			else tree = new PointQuadtree<>(new Dot(x, y), 0, 0, width, height);
+			if (tree != null) tree.insert(new Dot(x, y)); // if tree already exists use .insert()
+			else tree = new PointQuadtree<>(new Dot(x, y), 0, 0, width, height); //otherwise make new tree
 		} else if (mode == 'q') {
 			//if tree exists, call findInCircle for x, y, local radius var
 			if (tree != null) found = tree.findInCircle(x, y, mouseRadius);
@@ -182,7 +182,8 @@ public class DotTreeGUI extends DrawingGUI {
 	}
 
 	/**
-	 * Draws the dot tree
+	 * Draws the dot tree onto the window, using fillOval for each dot and
+	 * including vertical + horizontal lines extending to dot's parent regions
 	 * @param g		the graphics object for drawing
 	 * @param tree	a dot tree (not necessarily root)
 	 * @param level	how far down from the root qt is (0 for root, 1 for its children, etc.)
@@ -194,7 +195,6 @@ public class DotTreeGUI extends DrawingGUI {
 		g.fillOval((int)tree.getPoint().getX()-dotRadius, (int)tree.getPoint().getY()-dotRadius, dotRadius*2, dotRadius*2);
 		g.drawLine((int)tree.getPoint().getX(), tree.getY1(), (int)tree.getPoint().getX(), tree.getY2());
 		g.drawLine(tree.getX1(), (int)tree.getPoint().getY(), tree.getX2(), (int)tree.getPoint().getY());
-
 
 		// Recurse with children
 		for (int i = 1; i < 5; i++) {

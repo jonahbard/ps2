@@ -162,8 +162,16 @@ public class PointQuadtree<E extends Point2D> {
 		return list;
 	}
 
+	/**
+	 * if circle overlaps w/ rectangle, add point or recursively move to children until points added to accumulator
+	 * @param list
+	 * @param cx
+	 * @param cy
+	 * @param cr
+	 */
 	private void findInCircleHelper(List<E> list, double cx, double cy, double cr){
 		if (Geometry.circleIntersectsRectangle(cx, cy, cr, x1, y1, x2, y2)) {
+			//if the current point is in the circle add it to the acucmulator
 			if (Geometry.pointInCircle(point.getX(), point.getY(), cx, cy, cr)) list.add(point);
 			for (int i = 1; i < 5; i++){
 				PointQuadtree<E> child = getChild(i);
@@ -176,5 +184,4 @@ public class PointQuadtree<E extends Point2D> {
 	public static void main(String args[]) {
 		//lol maybe just do this later
 	}
-
 }

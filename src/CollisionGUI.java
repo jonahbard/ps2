@@ -35,7 +35,7 @@ public class CollisionGUI extends DrawingGUI {
 	}
 
 	/**
-	 * Adds an blob of the current blobType at the location
+	 * Adds a blob of the current blobType at the location
 	 */
 	private void add(int x, int y) {
 		if (blobType=='b') {
@@ -65,23 +65,19 @@ public class CollisionGUI extends DrawingGUI {
 			if (delay>1) delay /= 2;
 			setTimerDelay(delay);
 			System.out.println("delay:"+delay);
-		}
-		else if (k == 's') { // slower
+		} else if (k == 's') { // slower
 			delay *= 2;
 			setTimerDelay(delay);
 			System.out.println("delay:"+delay);
-		}
-		else if (k == 'r') { // add some new blobs at random positions
+		} else if (k == 'r') { // add some new blobs at random positions
 			for (int i=0; i<10; i++) {
 				add((int)(width*Math.random()), (int)(height*Math.random()));
 				repaint();
 			}			
-		}
-		else if (k == 'c' || k == 'd') { // control how collisions are handled
+		} else if (k == 'c' || k == 'd') { // control how collisions are handled
 			collisionHandler = k;
 			System.out.println("collision:"+k);
-		}
-		else { // set the type for new blobs
+		} else { // set the type for new blobs
 			blobType = k;			
 		}
 	}
@@ -90,7 +86,6 @@ public class CollisionGUI extends DrawingGUI {
 	 * DrawingGUI method, here drawing all the blobs and then re-drawing the colliders in red
 	 */
 	public void draw(Graphics g) {
-		// TODO: YOUR CODE HERE
 		// Ask all the blobs to draw themselves.
 		for (Blob b: blobs){
 			g.fillOval((int)(b.getX()-b.getR()), (int)(b.getY()-b.getR()), (int)b.getR()*2, (int)b.getR()*2);
@@ -133,8 +128,9 @@ public class CollisionGUI extends DrawingGUI {
 			b.step();
 		}
 		// Check for collisions
-		if (blobs.size() > 0) {
+		if (!blobs.isEmpty()) {
 			findColliders();
+			//if in d mode, remove all blobs in that colliders group
 			if (collisionHandler=='d') {
 				blobs.removeAll(colliders);
 				colliders = null;
