@@ -74,7 +74,6 @@ public class PointQuadtree<E extends Point2D> {
 	 */
 
 
-	//TODO: MAKE SURE TO USE CORRECT Y SCALING FOR CG!!
 	public void insert(E p2) {
 		int quadrant = findQuadrant(p2);
 		PointQuadtree<E> child = getChild(quadrant);
