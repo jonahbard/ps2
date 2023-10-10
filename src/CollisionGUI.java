@@ -23,7 +23,6 @@ public class CollisionGUI extends DrawingGUI {
 	private char blobType = 'b';						// what type of blob to create
 	private char collisionHandler = 'c';				// when there's a collision, 'c'olor them, or 'd'estroy them
 	private int delay = 100;							// timer control
-
 	private static final int collisionRadius = 20;
 
 	public CollisionGUI() {
