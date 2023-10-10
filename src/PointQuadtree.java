@@ -157,7 +157,7 @@ public class PointQuadtree<E extends Point2D> {
 	 * @return    	the points in the circle (and the qt's rectangle)
 	 */
 	public List<E> findInCircle(double cx, double cy, double cr) {
-		ArrayList<E> list = new ArrayList<E>();
+		ArrayList<E> list = new ArrayList<>();
 		findInCircleHelper(list, cx, cy, cr);
 		return list;
 	}

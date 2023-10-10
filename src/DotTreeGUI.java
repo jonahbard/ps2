@@ -138,6 +138,58 @@ public class DotTreeGUI extends DrawingGUI {
 		if (bad==0) System.out.println("test 1 passed!");
 	}
 
+	public void test2() {
+		found = null;
+
+		// Construct a new tree with a custom set of points
+		tree = new PointQuadtree<Dot>(new Dot(400, 300), 0, 0, 800, 600); // A
+		tree.insert(new Dot(100, 100)); // B
+		tree.insert(new Dot(700, 100)); // C
+		tree.insert(new Dot(100, 500)); // D
+		tree.insert(new Dot(700, 500)); // E
+		tree.insert(new Dot(400, 150)); // F
+		tree.insert(new Dot(400, 450)); // G
+		tree.insert(new Dot(200, 280)); // H
+		tree.insert(new Dot(600, 305)); // I
+
+		int bad = 0;
+
+		bad += testFind(400, 300, 50, 9, 9, 1); // center, small radius; find A, H, I
+		bad += testFind(100, 100, 100, 6, 3, 1); // upper left, find B
+		bad += testFind(700, 100, 150, 6, 3, 1); // upper right, find C
+		bad += testFind(100, 500, 250, 7, 5, 2); // lower left, find D, H
+		bad += testFind(700, 500, 250, 7, 5, 2); // lower right, find E, I
+		bad += testFind(0, 0, 900, 9, 9, 9); // large circle from top-left; find all
+
+		if (bad == 0) System.out.println("test 2 passed!");
+	}
+
+	public void test3() {
+		found = null;
+
+		// Construct a new tree with dots along the diagonal
+		tree = new PointQuadtree<Dot>(new Dot(100, 100), 0, 0, 800, 600); // A
+		tree.insert(new Dot(200, 200)); // B
+		tree.insert(new Dot(300, 300)); // C
+		tree.insert(new Dot(400, 400)); // D
+		tree.insert(new Dot(500, 500)); // E
+		tree.insert(new Dot(600, 600)); // F
+
+		int bad = 0;
+
+		// Run a set of tests on this tree
+		bad += testFind(150, 150, 125, 4, 3, 2);      // Circle center near A, with increased radius; should find A and B
+		bad += testFind(250, 250, 175, 5, 4, 2);      // Circle center near B, with increased radius; should find A, B, and C
+		bad += testFind(350, 350, 60, 5, 4, 0);       // Circle center near C, but smaller radius; should find none
+		bad += testFind(650, 650, 150, 6, 6, 1);      // Circle center near F, with increased radius; should find E and F
+		bad += testFind(600, 600, 75, 6, 6, 1);       // Circle center on F with decreased radius; should find only F
+		bad += testFind(410, 410, 140, 6, 6, 2);       // Circle center on D; should find only D and F
+		bad += testFind(750, 550, 20, 6, 6, 0);       // Circle outside the boundary; should find none
+
+		if (bad == 0) System.out.println("test 3 passed!");
+	}
+
+
 	/**
 	 * DrawingGUI method, here toggling the mode between 'a' and 'q'
 	 * and increasing/decresing mouseRadius via +/-
@@ -147,17 +199,22 @@ public class DotTreeGUI extends DrawingGUI {
 		if (key=='a' || key=='q') mode = key;
 		else if (key=='+') {
 			mouseRadius += 10;
+			System.out.println("Mouse radius: "+mouseRadius);
 		} else if (key=='-') {
 			mouseRadius -= 10;
 			if (mouseRadius < 0) mouseRadius=0;
+			System.out.println("Mouse radius: "+mouseRadius);
 		} else if (key=='m') {
 			trackMouse = !trackMouse;
 		} else if (key=='0') {
 			test0();
 		} else if (key=='1') {
 			test1();
+		} else if (key=='2') {
+			test2();
+		} else if (key=='3') {
+			test3();
 		}
-		//TODO: YOUR CODE HERE -- your test cases
 
 		repaint();
 	}
