@@ -13,6 +13,7 @@ import java.util.Set;
  * @author Chris Bailey-Kellogg, Dartmouth CS 10, Spring 2015
  * @author CBK, Spring 2016, updated for blobs
  * @author CBK, Fall 2016, using generic PointQuadtree
+ * @author Jonah Bard, Daniel Katz
  */
 public class CollisionGUI extends DrawingGUI {
 	private static final int width=800, height=600;		// size of the universe

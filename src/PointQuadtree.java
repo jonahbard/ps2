@@ -8,6 +8,7 @@ import java.util.List;
  * @author Chris Bailey-Kellogg, Dartmouth CS 10, Spring 2015.
  * @author CBK, Spring 2016, explicit rectangle.
  * @author CBK, Fall 2016, generic with Point2D interface.
+ * @author Jonah Bard, Daniel Katz
  * 
  */
 
@@ -132,7 +133,8 @@ public class PointQuadtree<E extends Point2D> {
 	}
 	
 	/**
-	 * Builds a list of all the points in the quadtree (including its descendants)
+	 * Builds a list of all the points in the quadtree (including its descendants).
+	 * Uses an accumulator that's built up by allPointsHelper.
 	 */
 	public List<E> allPoints() {
 		ArrayList<E> list = new ArrayList<E>();
@@ -140,6 +142,10 @@ public class PointQuadtree<E extends Point2D> {
 		return list;
 	}
 
+	/**
+	 * adds point to accumulator, and if there's a child recurse on it
+	 * @param list
+	 */
 	private void allPointsHelper(List<E> list){
 		list.add(point);
 		for (int i = 1; i < 5; i++){
@@ -171,17 +177,13 @@ public class PointQuadtree<E extends Point2D> {
 	 */
 	private void findInCircleHelper(List<E> list, double cx, double cy, double cr){
 		if (Geometry.circleIntersectsRectangle(cx, cy, cr, x1, y1, x2, y2)) {
-			//if the current point is in the circle add it to the acucmulator
+			//if the current point is in the circle add it to the accumulator
 			if (Geometry.pointInCircle(point.getX(), point.getY(), cx, cy, cr)) list.add(point);
+			//iterate through all quadrants
 			for (int i = 1; i < 5; i++){
-				PointQuadtree<E> child = getChild(i);
-				if (child == null) continue;
-				child.findInCircleHelper(list, cx, cy, cr);
+				if (!hasChild(i)) continue; //ignore if child doesn't exist
+				getChild(i).findInCircleHelper(list, cx, cy, cr);
 			}
 		}
-	}
-
-	public static void main(String args[]) {
-		//lol maybe just do this later
 	}
 }
