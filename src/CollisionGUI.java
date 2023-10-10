@@ -113,7 +113,7 @@ public class CollisionGUI extends DrawingGUI {
 		for (Blob b: blobs){
 			// make it a set so it runs faster because there are no duplicates
 			// cr: b.getR() + collisionRadius just in case r changes to be greater than collisionradius, ensuring that all overlapping blobs are considered colliding
-			Set<Blob> curCollisions = new HashSet<>(tree.findInCircle(b.getX(), b.getY(), b.getR() + collisionRadius));
+			Set<Blob> curCollisions = new HashSet<>(tree.findInCircle(b.getX(), b.getY(), b.getR() * 2 + 1));
 			if (curCollisions.size() < 2) continue;
 			colliders.addAll(curCollisions);
 		}
