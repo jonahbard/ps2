@@ -131,7 +131,7 @@ public class DotTreeGUI extends DrawingGUI {
 		tree.insert(new Dot(700,550)); // K
 		tree.insert(new Dot(310,410)); // L
 		int bad = 0;
-		bad += testFind(150,450,10,6,3,1); 	// rect for A [D] [E] [B [C]] [K]; circle for A, B, C; find B
+		bad += testFind(150,450,10,6,3,1);// rect for A [D] [E] [B [C]] [K]; circle for A, B, C; find B
 		bad += testFind(500,125,10,8,3,1);	// rect for A [D [G F H]] [E] [B] [K]; circle for A, D, G; find G
 		bad += testFind(300,400,15,10,6,2);	// rect for A [D [G F H]] [E] [B [C]] [K [L]]; circle for A,D,E,B,K,L; find A,L
 		bad += testFind(495,225,50,10,6,3);	// rect for A [D [G F H [I [J]]]] [E] [B] [K]; circle for A,D,G,H,I,J; find H,I,J
@@ -174,7 +174,7 @@ public class DotTreeGUI extends DrawingGUI {
 		tree.insert(new Dot(300, 300)); // C
 		tree.insert(new Dot(400, 400)); // D
 		tree.insert(new Dot(500, 500)); // E
-		tree.insert(new Dot(600, 600)); // F
+		tree.insert(new Dot(600, 590)); // F
 
 		int bad = 0;
 
@@ -182,7 +182,7 @@ public class DotTreeGUI extends DrawingGUI {
 		bad += testFind(150, 150, 125, 4, 3, 2);      // Circle center near A, with increased radius; should find A and B
 		bad += testFind(250, 250, 175, 5, 4, 2);      // Circle center near B, with increased radius; should find A, B, and C
 		bad += testFind(350, 350, 60, 5, 4, 0);       // Circle center near C, but smaller radius; should find none
-		bad += testFind(650, 650, 150, 6, 6, 1);      // Circle center near F, with increased radius; should find E and F
+		bad += testFind(600, 600, 150, 6, 6, 2);      // Circle center near F, with increased radius; should find E and F
 		bad += testFind(600, 600, 75, 6, 6, 1);       // Circle center on F with decreased radius; should find only F
 		bad += testFind(410, 410, 140, 6, 6, 2);       // Circle center on D; should find only D and F
 		bad += testFind(750, 550, 20, 6, 6, 0);       // Circle outside the boundary; should find none

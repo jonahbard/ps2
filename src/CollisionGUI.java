@@ -23,12 +23,15 @@ public class CollisionGUI extends DrawingGUI {
 	private char blobType = 'b';						// what type of blob to create
 	private char collisionHandler = 'c';				// when there's a collision, 'c'olor them, or 'd'estroy them
 	private int delay = 100;							// timer control
-	private static final int collisionRadius = 20;
+	private static final int collisionRadius = 0;
 
+	/**
+	 * Constructor for class
+	 */
 	public CollisionGUI() {
 		super("super-collider", width, height);
 
-		blobs = new ArrayList<Blob>();
+		blobs = new ArrayList<>();
 
 		// Timer drives the animation.
 		startTimer();
@@ -38,13 +41,11 @@ public class CollisionGUI extends DrawingGUI {
 	 * Adds a blob of the current blobType at the location
 	 */
 	private void add(int x, int y) {
-		if (blobType=='b') {
+		if (blobType == 'b') {
 			blobs.add(new Bouncer(x,y,width,height));
-		}
-		else if (blobType=='w') {
+		} else if (blobType == 'w') {
 			blobs.add(new Wanderer(x,y));
-		}
-		else {
+		} else {
 			System.err.println("Unknown blob type "+blobType);
 		}
 	}
@@ -87,15 +88,21 @@ public class CollisionGUI extends DrawingGUI {
 	 */
 	public void draw(Graphics g) {
 		// Ask all the blobs to draw themselves.
+
+		// create a set of blobs that we will draw as red if collided or black if not
+		//	a set enables O(1) lookup for if a blob has collided or not
+		Set<Blob> collidersSet = (colliders != null) ? new HashSet<>(colliders) : new HashSet<>();
+
 		for (Blob b: blobs){
-			g.fillOval((int)(b.getX()-b.getR()), (int)(b.getY()-b.getR()), (int)b.getR()*2, (int)b.getR()*2);
-		}
-		// Ask the colliders to draw themselves in red.
-		g.setColor(Color.red);
-		if (colliders != null) {
-			for (Blob b : colliders) {
-				g.fillOval((int) (b.getX() - b.getR()), (int) (b.getY() - b.getR()), (int) b.getR() * 2, (int) b.getR() * 2);
+			if (collidersSet.contains(b)) {
+				// Ask the colliders to draw themselves in red.
+				g.setColor(Color.red);
+			} else {
+				// Ask the non-colliders to draw themselves in black
+				g.setColor(Color.black);
 			}
+			// Draw each dot in the required color
+			g.fillOval((int)(b.getX()-b.getR()), (int)(b.getY()-b.getR()), (int)b.getR()*2, (int)b.getR()*2);
 		}
 	}
 
@@ -103,20 +110,30 @@ public class CollisionGUI extends DrawingGUI {
 	 * Sets colliders to include all blobs in contact with another blob
 	 */
 	private void findColliders() {
-		// Create the tree
+		// Create the tree based on all blobs
 		PointQuadtree<Blob> tree = new PointQuadtree<>(blobs.get(0), 0, 0, width, height);
 		for (Blob b: blobs) {
 			if (b != tree.getPoint()) tree.insert(b);
 		}
+
 		// For each blob, see if anybody else collided with it
-		colliders = new ArrayList<>();
-		for (Blob b: blobs){
-			// make it a set so it runs faster because there are no duplicates
-			// cr: b.getR() + collisionRadius just in case r changes to be greater than collisionradius, ensuring that all overlapping blobs are considered colliding
-			Set<Blob> curCollisions = new HashSet<>(tree.findInCircle(b.getX(), b.getY(), b.getR() * 2 + 1));
-			if (curCollisions.size() < 2) continue;
-			colliders.addAll(curCollisions);
+
+		// create a set to hold unique instances of collided blobs
+		// this prevents us from manually checking for duplicate collisions as the set will automatically deduplicate
+		Set<Blob> collidedBlobsSet = new HashSet<>();
+
+		for (Blob b: blobs) {
+			// create a set of collisions found in the circle around a dot
+			List<Blob> dotsFound = tree.findInCircle(b.getX(), b.getY(), b.getR() * 2 + collisionRadius);
+
+			// if there are less than 2 dots found, then the current dot is not colliding and we can move on
+			if (dotsFound.size() < 2) continue;
+
+			// if collisions have been found, add
+			collidedBlobsSet.addAll(dotsFound);
 		}
+		// Turn the arraylist into a
+		colliders = new ArrayList<>(collidedBlobsSet);
 	}
 
 	/**
