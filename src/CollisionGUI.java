@@ -39,6 +39,8 @@ public class CollisionGUI extends DrawingGUI {
 
 	/**
 	 * Adds a blob of the current blobType at the location
+	 * @param x
+	 * @param y
 	 */
 	private void add(int x, int y) {
 		if (blobType == 'b') {
@@ -52,6 +54,8 @@ public class CollisionGUI extends DrawingGUI {
 
 	/**
 	 * DrawingGUI method, here creating a new blob
+	 * @param x		x coordinate of mouse press
+	 * @param y		y coordinate of mouse press
 	 */
 	public void handleMousePress(int x, int y) {
 		add(x,y);
@@ -60,6 +64,7 @@ public class CollisionGUI extends DrawingGUI {
 
 	/**
 	 * DrawingGUI method
+	 * @param k	the key that was pressed
 	 */
 	public void handleKeyPress(char k) {
 		if (k == 'f') { // faster
@@ -85,6 +90,7 @@ public class CollisionGUI extends DrawingGUI {
 
 	/**
 	 * DrawingGUI method, here drawing all the blobs and then re-drawing the colliders in red
+	 * @param g
 	 */
 	public void draw(Graphics g) {
 		// Ask all the blobs to draw themselves.
@@ -129,7 +135,7 @@ public class CollisionGUI extends DrawingGUI {
 			// if there are less than 2 dots found, then the current dot is not colliding and we can move on
 			if (dotsFound.size() < 2) continue;
 
-			// if collisions have been found, add
+			// if collisions have been found, add collided blobs
 			collidedBlobsSet.addAll(dotsFound);
 		}
 		// Turn the arraylist into a
@@ -157,6 +163,10 @@ public class CollisionGUI extends DrawingGUI {
 		repaint();
 	}
 
+	/**
+	 * Run an instance of this class visually
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
